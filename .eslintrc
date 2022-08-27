@@ -1,0 +1,18 @@
+{
+  "extends": ["airbnb", "airbnb/hooks", "prettier", "react-app", "react-app/jest"],
+  "plugins": ["prettier", "@typescript-eslint"],
+  "parser": "@typescript-eslint/parser",
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["airbnb-typescript"],
+      "parserOptions": {
+        "project": ["tsconfig.json"]
+      }
+    }
+  ],
+  "rules": {
+    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],
+    "prettier/prettier": ["error"]
+  }
+}
