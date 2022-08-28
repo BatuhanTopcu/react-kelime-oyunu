@@ -1,66 +1,49 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { getRandomFromArray, randomIntFromInterval } from './helpers';
-
-const fetchNames = async (): Promise<string[]> => {
-  const response = await fetch('../../names.json');
-  const json = await response.json();
-  return json;
-};
+import allNames from './names.json';
 
 export const useNames = () => {
-  const [names, setNames] = useState<string[]>([]);
   const [nameHistory, setNameHistory] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const nameHistoryRef = useRef<string[]>([]);
 
-  const validNames = useMemo(() => {
-    if (nameHistory.length === 0) return names;
-    const lastNamesLastLetter = nameHistory[nameHistory.length - 1].slice(-1);
-    return names
+  const validNames = () => {
+    if (nameHistory.length === 0) return allNames;
+    const lastNamesLastLetter = nameHistoryRef.current[nameHistoryRef.current.length - 1].slice(-1);
+    return allNames
       .filter((name) => name.toLocaleLowerCase()[0] === lastNamesLastLetter)
-      .filter((name) => !nameHistory.includes(name.toLocaleLowerCase()));
-  }, [nameHistory, names]);
+      .filter((name) => !nameHistoryRef.current.includes(name.toLocaleLowerCase()));
+  };
 
-  const invalidNames = useMemo(() => {
+  const invalidNames = () => {
     if (nameHistory.length === 0) return [];
-    const lastNamesLastLetter = nameHistory[nameHistory.length - 1].slice(-1);
+    const lastNamesLastLetter = nameHistoryRef.current[nameHistoryRef.current.length - 1].slice(-1);
     return [
-      ...names.filter((name) => !(name.toLocaleLowerCase()[0] === lastNamesLastLetter)),
-      ...nameHistory.filter((name) => name.toLocaleLowerCase()[0] === lastNamesLastLetter),
+      ...allNames.filter((name) => !(name.toLocaleLowerCase()[0] === lastNamesLastLetter)),
+      ...nameHistoryRef.current.filter((name) => name.toLocaleLowerCase()[0] === lastNamesLastLetter),
     ];
-  }, [nameHistory, names]);
-
-  useEffect(() => {
-    if (names.length !== 0) return;
-    setIsLoading(true);
-    fetchNames()
-      .then((res) => {
-        setNames(res);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [names.length]);
+  };
 
   const checkValidName = (name: string) => {
-    if (nameHistory.includes(name)) return false;
+    if (nameHistoryRef.current.includes(name)) return false;
     const lowerName = name.toLocaleLowerCase();
-    const lastWord = nameHistory[nameHistory.length - 1];
-    if (lowerName[0] !== lastWord[lastWord.length - 1]) return false;
-    return validNames.includes(lowerName);
+    const lastWord = nameHistoryRef.current[nameHistoryRef.current.length - 1];
+    if (lastWord && lowerName[0] !== lastWord[lastWord.length - 1]) return false;
+    return validNames().includes(lowerName);
   };
 
   const appendNewName = (name: string): boolean => {
     const lowerName = name.toLocaleLowerCase();
     if (!checkValidName(lowerName)) return false;
-    setNameHistory([...nameHistory, lowerName]);
+    setNameHistory((prev) => [...prev, lowerName]);
+    nameHistoryRef.current.push(lowerName);
     return true;
   };
 
   const getRandomGuessWithError = (errorPercent: number): string | null => {
     const error = randomIntFromInterval(0, 100) <= errorPercent;
-    if (error && invalidNames.length > 0) return getRandomFromArray(invalidNames);
-    return getRandomFromArray(validNames);
+    if (error && invalidNames.length > 0) return getRandomFromArray(invalidNames());
+    return getRandomFromArray(validNames());
   };
 
-  return { names, appendNewName, isLoading, nameHistory, getRandomGuessWithError };
+  return { appendNewName, nameHistory, getRandomGuessWithError };
 };

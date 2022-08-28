@@ -8,7 +8,7 @@ export enum GameState {
 
 export type GameContextType = {
   startGame: () => void;
-  gameState: GameState;
+  gameState: React.MutableRefObject<GameState>;
   remainingTime: number;
   nameHistory: string[];
 };
