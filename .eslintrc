@@ -13,6 +13,7 @@
   ],
   "rules": {
     "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],
-    "prettier/prettier": ["error"]
+    "prettier/prettier": ["error"],
+    "import/prefer-default-export": 0
   }
 }
