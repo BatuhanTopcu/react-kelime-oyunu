@@ -1,14 +1,21 @@
 export enum GameState {
-  IDLE,
-  COMPUTER_TURN,
-  PLAYER_TURN,
-  PLAYER_WIN,
-  COMPUTER_WIN,
+  IDLE = 'Bekleniyor',
+  COMPUTER_TURN = 'Bilgisayarın sırası',
+  PLAYER_TURN = 'Kullanıcının sırası',
+  PLAYER_WIN = 'Kullanıcı kazandı',
+  COMPUTER_WIN = 'Bilgisayar kazandı',
 }
 
 export type GameContextType = {
   startGame: () => void;
-  gameState: React.MutableRefObject<GameState>;
+  gameState: GameState;
   remainingTime: number;
-  nameHistory: string[];
+  nameHistory: GameHistoryType[];
+};
+
+export type Players = 'computer' | 'player';
+
+export type GameHistoryType = {
+  name: string;
+  from: Players;
 };

@@ -5,7 +5,12 @@ enum ListenState {
   PROCESSING,
 }
 
-const Listen = (listenTimeout: number) =>
+type ListenParams = {
+  listenTimeout?: number;
+  onSpeechStart?: () => void;
+};
+
+const Listen = ({ listenTimeout, onSpeechStart }: ListenParams) =>
   new Promise<string | null>((resolve) => {
     if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window))
       throw new Error('Speech synthesis is not supported in this browser');
@@ -21,6 +26,7 @@ const Listen = (listenTimeout: number) =>
 
     recognition.onspeechstart = () => {
       recState = ListenState.SPEECH_START;
+      if (onSpeechStart) onSpeechStart();
       if (timeout) clearTimeout(timeout);
     };
 
@@ -36,10 +42,14 @@ const Listen = (listenTimeout: number) =>
     };
 
     recognition.start();
-    timeout = setTimeout(() => {
-      recognition.stop();
-      resolve(null);
-    }, listenTimeout);
+    if (listenTimeout) {
+      timeout = setTimeout(() => {
+        recognition.stop();
+        resolve(null);
+      }, listenTimeout);
+    } else {
+      timeout = null;
+    }
   });
 
 export default Listen;

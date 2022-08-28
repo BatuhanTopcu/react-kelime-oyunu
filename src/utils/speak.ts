@@ -1,4 +1,10 @@
-const Speak = async (word: string, delay = 0): Promise<void> =>
+type SpeakParams = {
+  word: string;
+  delay?: number;
+  onStart?: () => void;
+};
+
+const Speak = async ({ word, delay, onStart }: SpeakParams): Promise<void> =>
   new Promise<void>((resolve, reject) => {
     if (!('speechSynthesis' in window)) throw new Error('Speech synthesis is not supported in this browser');
     const synth = new window.SpeechSynthesisUtterance();
@@ -8,6 +14,9 @@ const Speak = async (word: string, delay = 0): Promise<void> =>
       window.speechSynthesis.speak(synth);
       window.speechSynthesis.resume();
     }, delay);
+    synth.onstart = () => {
+      if (onStart) onStart();
+    };
     synth.onend = () => {
       resolve();
     };

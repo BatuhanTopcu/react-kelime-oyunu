@@ -1,9 +1,10 @@
 import { useState, useRef } from 'react';
+import { GameHistoryType, Players } from '../types/gameTypes';
 import { getRandomFromArray, randomIntFromInterval } from './helpers';
 import allNames from './names.json';
 
 export const useNames = () => {
-  const [nameHistory, setNameHistory] = useState<string[]>([]);
+  const [nameHistory, setNameHistory] = useState<GameHistoryType[]>([]);
   const nameHistoryRef = useRef<string[]>([]);
 
   const getValidNames = () => {
@@ -31,9 +32,15 @@ export const useNames = () => {
     return getValidNames().includes(lowerName);
   };
 
-  const appendNewName = (name: string): boolean => {
+  const appendNewName = (name: string, from: Players): boolean => {
     const lowerName = name.toLocaleLowerCase();
-    setNameHistory((prev) => [...prev, lowerName]);
+    setNameHistory((prev) => [
+      ...prev,
+      {
+        name: lowerName,
+        from,
+      },
+    ]);
     if (!checkValidName(lowerName)) {
       return false;
     }
@@ -44,8 +51,6 @@ export const useNames = () => {
   const getRandomGuessWithError = (errorPercent: number): string | null => {
     const random = randomIntFromInterval(0, 100);
     const error = random <= errorPercent;
-    const valids = getValidNames();
-    console.log(valids, random, errorPercent, error);
     const invalids = getInvalidNames();
     if (error && invalids.length > 0) return getRandomFromArray(invalids);
     return getRandomFromArray(getValidNames());
