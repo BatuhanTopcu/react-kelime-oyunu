@@ -1,8 +1,8 @@
 enum ListenState {
-  IDLE = 'idle',
-  LISTEN = 'listening',
-  SPEECH_START = 'speechStarted',
-  PROCESSING = 'processing',
+  IDLE,
+  LISTEN,
+  SPEECH_START,
+  PROCESSING,
 }
 
 const Listen = (listenTimeout: number) =>
