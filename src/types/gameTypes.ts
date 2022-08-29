@@ -12,7 +12,7 @@ export type GameContextType = {
   remainingTime: number;
   nameHistory: GameHistoryType[];
   whyNotValid: WrongNameReasons | null;
-  canStart: boolean;
+  gameRunning: boolean;
 };
 
 export enum Players {

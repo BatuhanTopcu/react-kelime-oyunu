@@ -5,7 +5,7 @@ import { useGame } from '../hooks/useGame';
 export const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export function GameContextProvider({ children }: { children: React.ReactNode }) {
-  const { startGame, gameState, nameHistory, remainingTime, whyNotValid, canStart } = useGame();
+  const { startGame, gameState, nameHistory, remainingTime, whyNotValid, gameRunning } = useGame();
 
   const values = useMemo(
     () => ({
@@ -14,9 +14,9 @@ export function GameContextProvider({ children }: { children: React.ReactNode })
       nameHistory,
       remainingTime,
       whyNotValid,
-      canStart,
+      gameRunning,
     }),
-    [startGame, gameState, nameHistory, remainingTime, whyNotValid, canStart],
+    [startGame, gameState, nameHistory, remainingTime, whyNotValid, gameRunning],
   );
 
   return <GameContext.Provider value={values}>{children}</GameContext.Provider>;

@@ -98,8 +98,8 @@ export const useGame = () => {
     await gameLoop();
   };
 
-  const canStart =
+  const gameRunning =
     gameState === GameState.IDLE || gameState === GameState.COMPUTER_WIN || gameState === GameState.PLAYER_WIN;
 
-  return { startGame, gameState, nameHistory, remainingTime, whyNotValid, canStart };
+  return { startGame, gameState, nameHistory, remainingTime, whyNotValid, gameRunning };
 };
