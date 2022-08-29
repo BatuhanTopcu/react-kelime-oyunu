@@ -70,10 +70,9 @@ export const useNames = () => {
 
   const getRandomGuessWithError = (errorPercent: number): string | null => {
     const random = randomIntFromInterval(0, 100);
-    const error = random <= errorPercent;
-    const invalids = getInvalidNames();
-    if (error && invalids.length > 0) return getRandomFromArray(invalids);
-    return getRandomFromArray(getValidNames());
+    if (random > errorPercent) return getRandomFromArray(getValidNames());
+    const invalids = [...allNames, ...getInvalidNames()];
+    return getRandomFromArray(invalids);
   };
 
   return { appendNewName, nameHistory, getRandomGuessWithError, resetNameHistory, whyNotValid };

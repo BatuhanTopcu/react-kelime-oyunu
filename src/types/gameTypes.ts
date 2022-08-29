@@ -23,8 +23,8 @@ export type GameHistoryType = {
 };
 
 export enum WrongNameReasons {
-  TIMEOUT = 'Zaman aşımı',
+  TIMEOUT = 'Zamanında cevap verilmedi',
   IN_NAME_HISTORY = 'İsim zaten var',
   NOT_IN_NAME_LIST = 'İsim listesinde yok',
-  NOT_LAST_WORDS_FIRST = 'İsim son kelimenin ilk harfi ile başlamalı',
+  NOT_LAST_WORDS_FIRST = 'İsim son kelimenin son harfi ile başlamalı',
 }
