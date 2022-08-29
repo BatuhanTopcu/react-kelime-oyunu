@@ -1,12 +1,6 @@
 import React from 'react';
 
-type PlayButtonProps = {
-  onClick: () => void;
-  disabled: boolean;
-  type: 'start' | 'replay';
-};
-
-const PlaySvg = (
+export const PlaySvg = (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 drop-shadow-md">
     <path
       fillRule="evenodd"
@@ -16,7 +10,7 @@ const PlaySvg = (
   </svg>
 );
 
-const ReplaySvg = (
+export const ReplaySvg = (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 drop-shadow-md">
     <path
       fillRule="evenodd"
@@ -25,18 +19,3 @@ const ReplaySvg = (
     />
   </svg>
 );
-
-export default function PlayButton({ onClick, disabled, type }: PlayButtonProps) {
-  return (
-    <button
-      onClick={onClick}
-      type="button"
-      disabled={disabled}
-      className={`rounded-full w-16 min-h-[4rem] aspect-square flex items-center justify-center text-white drop-shadow-md transition-colors ease duration-300 ${
-        disabled ? 'bg-zinc-600' : 'bg-green-500 hover:bg-green-600'
-      }`}
-    >
-      {type === 'start' ? PlaySvg : ReplaySvg}
-    </button>
-  );
-}
