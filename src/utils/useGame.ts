@@ -5,18 +5,23 @@ import { useNames } from './useNames';
 import Speak from './speak';
 import Listen from './listen';
 import { randomIntFromInterval, sleep } from './helpers';
+import { checkMicAccess } from './checkMicAccess';
 
 export const useGame = () => {
-  const { getRandomGuessWithError, appendNewName, nameHistory } = useNames();
+  const { getRandomGuessWithError, appendNewName, nameHistory, resetNameHistory, whyNotValid } = useNames();
   const [gameState, setGameState] = useState<GameState>(GameState.IDLE);
   const gameStateRef = useRef<GameState>(GameState.IDLE);
+
+  const setBothGameState = (state: GameState) => {
+    gameStateRef.current = state;
+    setGameState(state);
+  };
 
   const [remainingTime, setRemainingTime] = useState(Math.floor(GAME_SETTINGS.SPEAK_TIME_MS / 1000));
   const interval = useRef<NodeJS.Timer | null>(null);
 
   const computerTurn = async () => {
-    gameStateRef.current = GameState.COMPUTER_TURN;
-    setGameState(GameState.COMPUTER_TURN);
+    setBothGameState(GameState.COMPUTER_TURN);
     const guess = getRandomGuessWithError(GAME_SETTINGS.COMPUTER_SELECT_WORD_ERROR_PERCENT);
     if (!guess) return false;
     const delay = randomIntFromInterval(
@@ -25,6 +30,7 @@ export const useGame = () => {
     );
     if (delay > GAME_SETTINGS.SPEAK_TIME_MS) {
       await sleep(GAME_SETTINGS.SPEAK_TIME_MS);
+      appendNewName(null, 'computer');
       return false;
     }
     await Speak({
@@ -39,25 +45,22 @@ export const useGame = () => {
   };
 
   const playerTurn = async () => {
-    gameStateRef.current = GameState.PLAYER_TURN;
-    setGameState(GameState.PLAYER_TURN);
+    setBothGameState(GameState.PLAYER_TURN);
     const guess = await Listen({
       listenTimeout: GAME_SETTINGS.SPEAK_TIME_MS,
       onSpeechStart: () => {
         if (interval.current) clearInterval(interval.current);
       },
     });
-    if (!guess || !appendNewName(guess, 'player')) return false;
+    if (!appendNewName(guess, 'player')) return false;
     return true;
   };
 
   const finishGame = () => {
     if (gameStateRef.current === GameState.COMPUTER_TURN) {
-      gameStateRef.current = GameState.PLAYER_WIN;
-      setGameState(GameState.PLAYER_WIN);
+      setBothGameState(GameState.PLAYER_WIN);
     } else {
-      gameStateRef.current = GameState.COMPUTER_WIN;
-      setGameState(GameState.COMPUTER_WIN);
+      setBothGameState(GameState.COMPUTER_WIN);
     }
   };
 
@@ -75,18 +78,30 @@ export const useGame = () => {
       finishGame();
       return;
     }
-    gameStateRef.current =
-      gameStateRef.current === GameState.COMPUTER_TURN ? GameState.PLAYER_TURN : GameState.COMPUTER_TURN;
-    setGameState(gameStateRef.current === GameState.COMPUTER_TURN ? GameState.PLAYER_TURN : GameState.COMPUTER_TURN);
+
+    setBothGameState(
+      gameStateRef.current === GameState.COMPUTER_TURN ? GameState.PLAYER_TURN : GameState.COMPUTER_TURN,
+    );
     await sleep(GAME_SETTINGS.SLEEP_BETWEEN_ROUNDS_MS);
     await gameLoop();
   };
 
   const startGame = async () => {
-    gameStateRef.current = GameState.COMPUTER_TURN;
-    setGameState(GameState.COMPUTER_TURN);
+    const micAccess = await checkMicAccess();
+    if (micAccess !== 'granted') {
+      // eslint-disable-next-line no-alert
+      alert('Lütfen oyuna başlamak için mikrofon izni verin.');
+      return;
+    }
+    setBothGameState(GameState.COMPUTER_TURN);
     await gameLoop();
   };
 
-  return { startGame, gameState, nameHistory, remainingTime };
+  const replayGame = async () => {
+    resetNameHistory();
+    setBothGameState(GameState.IDLE);
+    await startGame();
+  };
+
+  return { startGame, replayGame, gameState, nameHistory, remainingTime, whyNotValid };
 };

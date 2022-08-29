@@ -11,6 +11,8 @@ export type GameContextType = {
   gameState: GameState;
   remainingTime: number;
   nameHistory: GameHistoryType[];
+  replayGame: () => void;
+  whyNotValid: WrongNameReasons | null;
 };
 
 export type Players = 'computer' | 'player';
@@ -19,3 +21,10 @@ export type GameHistoryType = {
   name: string;
   from: Players;
 };
+
+export enum WrongNameReasons {
+  TIMEOUT = 'Zaman aşımı',
+  IN_NAME_HISTORY = 'İsim zaten var',
+  NOT_IN_NAME_LIST = 'İsim listesinde yok',
+  NOT_LAST_WORDS_FIRST = 'İsim son kelimenin ilk harfi ile başlamalı',
+}

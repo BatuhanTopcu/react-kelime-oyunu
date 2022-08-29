@@ -1,20 +1,22 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import { GameContextType } from '../types/gameTypes';
-import { useGame } from '../utils/useGameHooks';
+import { useGame } from '../utils/useGame';
 
 export const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export function GameContextProvider({ children }: { children: React.ReactNode }) {
-  const { startGame, gameState, nameHistory, remainingTime } = useGame();
+  const { startGame, gameState, nameHistory, remainingTime, replayGame, whyNotValid } = useGame();
 
   const values = useMemo(
     () => ({
       startGame,
+      replayGame,
       gameState,
       nameHistory,
       remainingTime,
+      whyNotValid,
     }),
-    [startGame, gameState, nameHistory, remainingTime],
+    [startGame, replayGame, gameState, nameHistory, remainingTime, whyNotValid],
   );
 
   return <GameContext.Provider value={values}>{children}</GameContext.Provider>;
@@ -22,8 +24,6 @@ export function GameContextProvider({ children }: { children: React.ReactNode })
 
 export const useGameContext = () => {
   const ctx = useContext(GameContext);
-  if (!ctx) {
-    throw new Error('GameContext is not defined');
-  }
+  if (!ctx) throw new Error('GameContext is not defined');
   return ctx;
 };
