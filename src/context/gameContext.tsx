@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import { GameContextType } from '../types/gameTypes';
-import { useGame } from '../utils/useGame';
+import { useGame } from '../hooks/useGame';
 
 export const GameContext = createContext<GameContextType | undefined>(undefined);
 

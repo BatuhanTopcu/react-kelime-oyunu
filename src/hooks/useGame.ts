@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react';
 import { GameState } from '../types/gameTypes';
-import GAME_SETTINGS from './gameSettings';
+import GAME_SETTINGS from '../utils/gameSettings';
 import { useNames } from './useNames';
-import Speak from './speak';
-import Listen from './listen';
-import { randomIntFromInterval, sleep } from './helpers';
-import { checkMicAccess } from './checkMicAccess';
+import Speak from '../utils/speak';
+import Listen from '../utils/listen';
+import { randomIntFromInterval, sleep } from '../utils/helpers';
+import { checkMicAccess } from '../utils/checkMicAccess';
 
 export const useGame = () => {
   const { getRandomGuessWithError, appendNewName, nameHistory, resetNameHistory, whyNotValid } = useNames();

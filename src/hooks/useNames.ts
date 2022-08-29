@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { GameHistoryType, Players, WrongNameReasons } from '../types/gameTypes';
-import { getRandomFromArray, randomIntFromInterval } from './helpers';
-import allNames from './names.json';
+import { getRandomFromArray, randomIntFromInterval } from '../utils/helpers';
+import allNames from '../names.json';
 
 export const useNames = () => {
   const [nameHistory, setNameHistory] = useState<GameHistoryType[]>([]);
