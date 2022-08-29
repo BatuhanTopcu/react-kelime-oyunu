@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { GameState } from '../types/gameTypes';
+import { GameState, Players } from '../types/gameTypes';
 import GAME_SETTINGS from '../utils/gameSettings';
 import { useNames } from './useNames';
 import Speak from '../utils/speak';
@@ -30,7 +30,7 @@ export const useGame = () => {
     );
     if (delay > GAME_SETTINGS.SPEAK_TIME_MS) {
       await sleep(GAME_SETTINGS.SPEAK_TIME_MS);
-      appendNewName(null, 'computer');
+      appendNewName(null, Players.computer);
       return false;
     }
     await Speak({
@@ -40,7 +40,7 @@ export const useGame = () => {
         if (interval.current) clearInterval(interval.current);
       },
     });
-    if (!appendNewName(guess, 'computer')) return false;
+    if (!appendNewName(guess, Players.computer)) return false;
     return true;
   };
 
@@ -52,7 +52,7 @@ export const useGame = () => {
         if (interval.current) clearInterval(interval.current);
       },
     });
-    if (!appendNewName(guess, 'player')) return false;
+    if (!appendNewName(guess, Players.user)) return false;
     return true;
   };
 
@@ -93,15 +93,13 @@ export const useGame = () => {
       alert('Lütfen oyuna başlamak için mikrofon izni verin.');
       return;
     }
+    if (GameState.COMPUTER_WIN || GameState.PLAYER_WIN) resetNameHistory();
     setBothGameState(GameState.COMPUTER_TURN);
     await gameLoop();
   };
 
-  const replayGame = async () => {
-    resetNameHistory();
-    setBothGameState(GameState.IDLE);
-    await startGame();
-  };
+  const canStart =
+    gameState === GameState.IDLE || gameState === GameState.COMPUTER_WIN || gameState === GameState.PLAYER_WIN;
 
-  return { startGame, replayGame, gameState, nameHistory, remainingTime, whyNotValid };
+  return { startGame, gameState, nameHistory, remainingTime, whyNotValid, canStart };
 };

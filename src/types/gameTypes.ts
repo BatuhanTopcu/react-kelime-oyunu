@@ -11,11 +11,14 @@ export type GameContextType = {
   gameState: GameState;
   remainingTime: number;
   nameHistory: GameHistoryType[];
-  replayGame: () => void;
   whyNotValid: WrongNameReasons | null;
+  canStart: boolean;
 };
 
-export type Players = 'computer' | 'player';
+export enum Players {
+  computer = 'Bilgisayar',
+  user = 'Kullanıcı',
+}
 
 export type GameHistoryType = {
   name: string;
