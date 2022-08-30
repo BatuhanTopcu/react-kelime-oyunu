@@ -1,23 +1,24 @@
 import React from 'react';
-import { GameHistoryType, Players } from '../types/gameTypes';
+import { GameHistoryType, Players } from '../types/types';
+import Loading from './Loading';
 
-export default function Message({ msg }: { msg: GameHistoryType }) {
+type MessageProps = (GameHistoryType & { loading?: never }) | { from: Players; loading: true; name?: undefined };
+
+export default function Message({ from, name, loading }: MessageProps) {
   return (
     <div
-      className={`w-max px-4 py-1 font-semibold text-2xl rounded-xl drop-shadow-md text-slate-100 relative ${
-        msg.from === Players.computer
-          ? 'self-start rounded-bl-none bg-rose-700'
+      className={`w-max px-4 py-1 font-semibold text-2xl rounded-xl drop-shadow-dark text-slate-100 relative ${
+        from === Players.computer
+          ? 'self-start rounded-bl-none bg-violet-500'
           : 'self-end rounded-br-none bg-emerald-500'
       }`}
     >
       <div
-        className={`flex absolute text-sm top-10 drop-shadow-md  ${
-          msg.from === Players.computer ? 'left-0' : 'right-0'
-        }`}
+        className={`flex absolute text-sm top-10 drop-shadow-md  ${from === Players.computer ? 'left-0' : 'right-0'}`}
       >
-        {msg.from}
+        {from}
       </div>
-      {msg.name}
+      {loading ? <Loading /> : <span className="drop-shadow-dark">{name}</span>}
     </div>
   );
 }

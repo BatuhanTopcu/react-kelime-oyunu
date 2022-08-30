@@ -1,24 +1,24 @@
 import React from 'react';
+import { useGameContext } from '../context/gameContext';
 import { useScrollToBottomElement } from '../hooks/generalHooks';
-import { GameHistoryType, GameState } from '../types/gameTypes';
 import Message from './Message';
 
-type MessageContainerProps = {
-  messages: GameHistoryType[];
-  systemMsg: GameState;
-};
-
-export default function MessageContainer({ messages, systemMsg }: MessageContainerProps) {
-  const divRef = useScrollToBottomElement([messages]);
+export default function MessageContainer() {
+  const { gameState, nameHistory, waitingForGuess, whyNotValid } = useGameContext();
+  const divRef = useScrollToBottomElement([nameHistory]);
   return (
-    <div className="w-full max-w-xl bg-slate-600 h-full px-2 py-2 flex flex-col gap-2 rounded-3xl drop-shadow-xl overflow-y-auto">
-      <div className="w-full flex justify-center text-2xl text-white">İsim Geçmişi</div>
+    <div className="w-full max-w-xl bg-zinc-700 h-full p-2 flex flex-col gap-2 rounded-3xl drop-shadow-xl overflow-hidden">
+      <div className="w-full flex justify-center text-2xl text-white font-secular drop-shadow-dark">İsim Geçmişi</div>
       <div className="overflow-y-auto flex flex-col gap-2 px-2 scrollbar h-full pb-4" ref={divRef}>
-        {messages.map((msg) => (
-          <Message key={msg.name} msg={msg} />
+        {nameHistory.map((msg) => (
+          <Message key={msg.name} name={msg.name} from={msg.from} />
         ))}
+        {waitingForGuess && <Message from={waitingForGuess} loading />}
       </div>
-      <div className="flex justify-center text-xl">{systemMsg}</div>
+      <div className="flex flex-col justify-center text-xl text-white font-secular drop-shadow-dark text-center">
+        {whyNotValid && <span className="text-base font-poppins">{whyNotValid}</span>}
+        {gameState}
+      </div>
     </div>
   );
 }

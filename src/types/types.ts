@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/indent */
 export enum GameState {
   IDLE = 'Bekleniyor',
   COMPUTER_TURN = 'Bilgisayarın sırası',
@@ -13,6 +14,10 @@ export type GameContextType = {
   nameHistory: GameHistoryType[];
   whyNotValid: WrongNameReasons | null;
   gameRunning: boolean;
+  isOpen: boolean;
+  openPopup: () => void;
+  closePopup: () => void;
+  waitingForGuess: Players | false;
 };
 
 export enum Players {
@@ -26,8 +31,8 @@ export type GameHistoryType = {
 };
 
 export enum WrongNameReasons {
-  TIMEOUT = 'Zamanında cevap verilmedi',
-  IN_NAME_HISTORY = 'İsim zaten var',
-  NOT_IN_NAME_LIST = 'İsim listesinde yok',
-  NOT_LAST_WORDS_FIRST = 'İsim son kelimenin son harfi ile başlamalı',
+  TIMEOUT = 'Zamanında isim söylenmedi',
+  IN_NAME_HISTORY = 'Söylenen isim daha önce kullanıldı',
+  NOT_IN_NAME_LIST = 'Söylenen isim isim listede yok',
+  NOT_LAST_WORDS_FIRST = 'İsim son söylenen kelimenin son harfi ile başlamalı',
 }

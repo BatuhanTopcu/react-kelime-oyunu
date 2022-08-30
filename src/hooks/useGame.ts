@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { GameState, Players } from '../types/gameTypes';
+import { GameState, Players } from '../types/types';
 import GAME_SETTINGS from '../utils/gameSettings';
 import { useNames } from './useNames';
 import Speak from '../utils/speak';
@@ -10,6 +10,7 @@ import { checkMicAccess } from '../utils/checkMicAccess';
 export const useGame = () => {
   const { getRandomGuessWithError, appendNewName, nameHistory, resetNameHistory, whyNotValid } = useNames();
   const [gameState, setGameState] = useState<GameState>(GameState.IDLE);
+  const [waitingForGuess, setWaitingForGuess] = useState<Players | false>(false);
   const gameStateRef = useRef<GameState>(GameState.IDLE);
 
   const setBothGameState = (state: GameState) => {
@@ -22,6 +23,7 @@ export const useGame = () => {
 
   const computerTurn = async () => {
     setBothGameState(GameState.COMPUTER_TURN);
+    setWaitingForGuess(Players.computer);
     const guess = getRandomGuessWithError(GAME_SETTINGS.COMPUTER_SELECT_WORD_ERROR_PERCENT);
     if (!guess) return false;
     const delay = randomIntFromInterval(
@@ -40,18 +42,21 @@ export const useGame = () => {
         if (interval.current) clearInterval(interval.current);
       },
     });
+    setWaitingForGuess(false);
     if (!appendNewName(guess, Players.computer)) return false;
     return true;
   };
 
   const playerTurn = async () => {
     setBothGameState(GameState.PLAYER_TURN);
+    setWaitingForGuess(Players.user);
     const guess = await Listen({
       listenTimeout: GAME_SETTINGS.SPEAK_TIME_MS,
       onSpeechStart: () => {
         if (interval.current) clearInterval(interval.current);
       },
     });
+    setWaitingForGuess(false);
     if (!appendNewName(guess, Players.user)) return false;
     return true;
   };
@@ -101,5 +106,5 @@ export const useGame = () => {
   const gameRunning =
     gameState === GameState.IDLE || gameState === GameState.COMPUTER_WIN || gameState === GameState.PLAYER_WIN;
 
-  return { startGame, gameState, nameHistory, remainingTime, whyNotValid, gameRunning };
+  return { startGame, gameState, nameHistory, remainingTime, whyNotValid, gameRunning, waitingForGuess };
 };

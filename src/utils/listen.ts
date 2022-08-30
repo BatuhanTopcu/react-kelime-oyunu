@@ -10,7 +10,7 @@ type ListenParams = {
   onSpeechStart?: () => void;
 };
 
-const Listen = ({ listenTimeout, onSpeechStart }: ListenParams) =>
+const Listen = ({ listenTimeout, onSpeechStart }: ListenParams): Promise<string | null> =>
   new Promise<string | null>((resolve) => {
     if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window))
       throw new Error('Speech synthesis is not supported in this browser');

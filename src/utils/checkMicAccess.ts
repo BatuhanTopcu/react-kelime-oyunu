@@ -1,4 +1,4 @@
-export const checkMicAccess = async () => {
+export const checkMicAccess = async (): Promise<PermissionState> => {
   try {
     await navigator.mediaDevices.getUserMedia({ audio: true });
   } catch (err) {

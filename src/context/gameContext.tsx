@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useMemo } from 'react';
-import { GameContextType } from '../types/gameTypes';
+import { GameContextType } from '../types/types';
 import { useGame } from '../hooks/useGame';
+import { usePopup } from '../hooks/usePopup';
 
 export const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export function GameContextProvider({ children }: { children: React.ReactNode }) {
-  const { startGame, gameState, nameHistory, remainingTime, whyNotValid, gameRunning } = useGame();
+  const { startGame, gameState, nameHistory, remainingTime, whyNotValid, gameRunning, waitingForGuess } = useGame();
+  const { isOpen, closePopup, openPopup } = usePopup();
 
   const values = useMemo(
     () => ({
@@ -15,8 +17,23 @@ export function GameContextProvider({ children }: { children: React.ReactNode })
       remainingTime,
       whyNotValid,
       gameRunning,
+      isOpen,
+      closePopup,
+      openPopup,
+      waitingForGuess,
     }),
-    [startGame, gameState, nameHistory, remainingTime, whyNotValid, gameRunning],
+    [
+      startGame,
+      gameState,
+      nameHistory,
+      remainingTime,
+      whyNotValid,
+      gameRunning,
+      isOpen,
+      closePopup,
+      openPopup,
+      waitingForGuess,
+    ],
   );
 
   return <GameContext.Provider value={values}>{children}</GameContext.Provider>;

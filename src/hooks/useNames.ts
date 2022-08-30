@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { GameHistoryType, Players, WrongNameReasons } from '../types/gameTypes';
+import { GameHistoryType, Players, WrongNameReasons } from '../types/types';
 import { getRandomFromArray, randomIntFromInterval } from '../utils/helpers';
 import allNames from '../names.json';
 
@@ -11,6 +11,7 @@ export const useNames = () => {
   const resetNameHistory = () => {
     nameHistoryRef.current = [];
     setNameHistory([]);
+    setWhyNotValid(null);
   };
 
   const getValidNames = () => {
