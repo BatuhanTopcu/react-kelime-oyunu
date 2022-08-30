@@ -23,6 +23,16 @@ export default function InfoBox({ handleClose }: InfoBoxProps) {
         varsayarsak şöyle bir sequence oluşuyor;
         <br /> **Hasan &gt; Niyazi &gt; İbrahim &gt; Mustafa &gt; Ahmet &gt; …**
       </div>
+      <div className="flex justify-center mt-2">
+        <a
+          className="font-bold font-secular text-blue-800 hover:text-blue-600 tra-200"
+          target="_blank"
+          href="mailto:batuhantopcu17@gmail.com"
+          rel="noreferrer"
+        >
+          Batuhan Topçu
+        </a>
+      </div>
     </div>
   );
 }

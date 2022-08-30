@@ -14,6 +14,7 @@ const Listen = ({ listenTimeout, onSpeechStart }: ListenParams): Promise<string 
   new Promise<string | null>((resolve) => {
     if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window))
       throw new Error('Speech synthesis is not supported in this browser');
+    // onnomatch eventi çalışmadığı için elle çözüm üretmek zorunda kaldım
     let recState: ListenState = ListenState.IDLE;
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.lang = 'tr-TR';

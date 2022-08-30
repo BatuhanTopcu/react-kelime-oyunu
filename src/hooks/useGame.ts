@@ -27,12 +27,13 @@ export const useGame = () => {
     const guess = getRandomGuessWithError(GAME_SETTINGS.COMPUTER_SELECT_WORD_ERROR_PERCENT);
     if (!guess) return false;
     const delay = randomIntFromInterval(
-      0,
+      (GAME_SETTINGS.COMPUTER_TIME_ERROR_PERCENT / 100) * GAME_SETTINGS.SPEAK_TIME_MS,
       GAME_SETTINGS.SPEAK_TIME_MS + (GAME_SETTINGS.COMPUTER_TIME_ERROR_PERCENT / 100) * GAME_SETTINGS.SPEAK_TIME_MS,
     );
     if (delay > GAME_SETTINGS.SPEAK_TIME_MS) {
       await sleep(GAME_SETTINGS.SPEAK_TIME_MS);
       appendNewName(null, Players.computer);
+      setWaitingForGuess(false);
       return false;
     }
     await Speak({

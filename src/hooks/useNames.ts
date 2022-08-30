@@ -3,6 +3,23 @@ import { GameHistoryType, Players, WrongNameReasons } from '../types/types';
 import { getRandomFromArray, randomIntFromInterval } from '../utils/helpers';
 import allNames from '../names.json';
 
+const getValidNames = (names: string[], history: string[]): string[] => {
+  if (history.length === 0) return names;
+  const lastNamesLastLetter = history[history.length - 1].slice(-1);
+  return names
+    .filter((name) => name.toLocaleLowerCase()[0] === lastNamesLastLetter)
+    .filter((name) => !history.includes(name.toLocaleLowerCase()));
+};
+
+const getInvalidNames = (names: string[], history: string[]): string[] => {
+  if (history.length === 0) return [];
+  const lastNamesLastLetter = history[history.length - 1].slice(-1);
+  return [
+    ...names.filter((name) => !(name.toLocaleLowerCase()[0] === lastNamesLastLetter)),
+    ...history.filter((name) => name.toLocaleLowerCase()[0] === lastNamesLastLetter),
+  ];
+};
+
 export const useNames = () => {
   const [nameHistory, setNameHistory] = useState<GameHistoryType[]>([]);
   const nameHistoryRef = useRef<string[]>([]);
@@ -12,23 +29,6 @@ export const useNames = () => {
     nameHistoryRef.current = [];
     setNameHistory([]);
     setWhyNotValid(null);
-  };
-
-  const getValidNames = () => {
-    if (nameHistoryRef.current.length === 0) return allNames;
-    const lastNamesLastLetter = nameHistoryRef.current[nameHistoryRef.current.length - 1].slice(-1);
-    return allNames
-      .filter((name) => name.toLocaleLowerCase()[0] === lastNamesLastLetter)
-      .filter((name) => !nameHistoryRef.current.includes(name.toLocaleLowerCase()));
-  };
-
-  const getInvalidNames = () => {
-    if (nameHistoryRef.current.length === 0) return [];
-    const lastNamesLastLetter = nameHistoryRef.current[nameHistoryRef.current.length - 1].slice(-1);
-    return [
-      ...allNames.filter((name) => !(name.toLocaleLowerCase()[0] === lastNamesLastLetter)),
-      ...nameHistoryRef.current.filter((name) => name.toLocaleLowerCase()[0] === lastNamesLastLetter),
-    ];
   };
 
   const checkValidName = (name: string) => {
@@ -42,7 +42,7 @@ export const useNames = () => {
       setWhyNotValid(WrongNameReasons.NOT_LAST_WORDS_FIRST);
       return false;
     }
-    if (!getValidNames().includes(lowerName)) {
+    if (!getValidNames(allNames, nameHistoryRef.current).includes(lowerName)) {
       setWhyNotValid(WrongNameReasons.NOT_IN_NAME_LIST);
       return false;
     }
@@ -71,8 +71,8 @@ export const useNames = () => {
 
   const getRandomGuessWithError = (errorPercent: number): string | null => {
     const random = randomIntFromInterval(0, 100);
-    if (random > errorPercent) return getRandomFromArray(getValidNames());
-    const invalids = [...allNames, ...getInvalidNames()];
+    if (random > errorPercent) return getRandomFromArray(getValidNames(allNames, nameHistoryRef.current));
+    const invalids = [...allNames, ...getInvalidNames(allNames, nameHistoryRef.current)];
     return getRandomFromArray(invalids);
   };
 
